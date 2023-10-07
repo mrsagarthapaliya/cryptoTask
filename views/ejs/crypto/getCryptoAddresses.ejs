@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>crypto address information</title>
+</head>
+
+<body>
+  <h1>your Crypto Address Information</h1>
+
+  <ul id="cryptoInfoList"></ul>
+
+  <script>
+    const cryptoInfoList = <%- data %>;
+
+    function displayCryptoInformation(cryptoInfoList) {
+      const listContainer = document.getElementById("cryptoInfoList");
+
+      listContainer.innerHTML = "";
+
+      cryptoInfoList.forEach((cryptoInfo) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `<b>crypto Address:</b> ${cryptoInfo.cryptoAddress.toLocaleString()},<br><b>Recent Balance:</b> ${cryptoInfo.recentBalance} <br><b>owner:</b> ${cryptoInfo.owner}`;
+
+        listItem.appendChild(document.createElement("br"));
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete address";
+
+        deleteButton.addEventListener("click", () => {
+          deleteItemFromDatabase(cryptoInfo.cryptoAddress); 
+        });
+
+        listItem.appendChild(deleteButton); 
+        listItem.appendChild(document.createElement("br"));
+        listItem.appendChild(document.createElement("br"));
+
+        function deleteItemFromDatabase(cryptoAddress) {
+          console.log(cryptoAddress + "deleted")
+          fetch(`/api/crypto/deleteCrypto?cryptoAddress=${encodeURIComponent(cryptoAddress)}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+            .then((response) => response.json())
+            .then(window.location.reload())
+            .catch((error) => {
+              console.error('Error:', error);
+            });
+        }
+
+        listContainer.appendChild(listItem);
+      });
+    }
+
+    window.onload = function () {
+      displayCryptoInformation(cryptoInfoList);
+    };
+  </script>
+</body>
+
+</html>

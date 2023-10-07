@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Balance Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+</head>
+<body>
+  <h1>Crypto Balance Report</h1>
+  for <b><%= cryptoAddress %></b>
+  <p>Based on: <%= basedOn %></p>
+  <ul id="cryptoInfoList"></ul>
+  <br><br>
+  <canvas id="cryptoChart"></canvas>
+
+  <script>
+    const cryptoInfoData = <%- data %>; 
+
+    function displayCryptoInformation(cryptoInfoList) {
+      const listContainer = document.getElementById("cryptoInfoList");
+
+      listContainer.innerHTML = "";
+
+      cryptoInfoList.forEach((cryptoInfo) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `<b>Date</b>: ${new Date(cryptoInfo.date).toLocaleString()},<br> <b>Balance:</b> ${cryptoInfo.balance}<br><br>`;
+
+        listContainer.appendChild(listItem);
+      });
+    }
+
+    function createChart(crypto) {
+      const ctx = document.getElementById("cryptoChart").getContext("2d");
+      const dates = crypto.map((cryptoInfo) => cryptoInfo.date.split("T")[0]); // Convert dates to Date objects
+      console.log(dates)
+      const balances = crypto.map((cryptoInfo) => cryptoInfo.balance);
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: dates,
+          datasets: [
+            {
+              label: "dates",
+              data: balances,
+              borderWidth: 1,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            x: {
+              type: "time", 
+              time: {
+                unit: "day",
+                displayFormats: {
+                  day: "DD/MM/YYYY", 
+                },
+              },
+              position: "bottom",
+            },
+            y: {
+              // type: "linear",
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    }
+
+    window.onload = function () {
+      displayCryptoInformation(cryptoInfoData);
+      createChart(cryptoInfoData);
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title></title>
+  </head>
+  <body>
+    Hi <b><%= username %></b> This is your homepage
+    <br>
+    Choose whatever you like to do
+    <br>
+    <br>
+    <form method="GET" action="http://localhost:5000/api/crypto/fetchBalance">
+        <input type="text" name="cryptoAddress" placeholder="Type your crypto address here..." size="50">
+        <br>
+        <button type="submit" name="get-crypto-balance">Find Balance</button>
+    </form>
+    <br>
+    <br>
+    <form method="GET" action="http://localhost:5000/api/crypto/findCrypto">
+        Click here to get your crypto information <br>
+        <button type="submit" name="get-crypto-information">Your Crypto Infomation</button>
+    </form>
+    <br>
+    <br>
+    <form id="balanceReport" method="GET" action="http://localhost:5000/api/crypto/balanceReport/:basedOn">
+        Provide your crypto address to fetch report <br>
+        <input type="text" name="cryptoAddress" placeholder="Type your crypto address here..." size="50">
+        <select name = "basedOn" id="basedOnSelect">
+                    <option value = "daily">daily</option>
+                    <option value = "weekely">weekely</option>
+                    <option value = "monthly">monthly</option>
+                </select><br>
+        number of data you want to see from 1 to 10<br>
+        <input type="number" name="numberOfData" value="4" min="1" max="100">
+                <br>
+        <button type="submit" name="crypto-balance-report">Fetch Report</button>
+    </form>
+    <br>
+    <br>
+    <form  method="POST" action="http://localhost:5000/api/crypto/addCrypto">
+        Add new crypto address <br>
+        <input type="text" name="cryptoAddress" placeholder="Type your crypto address here..." size="50">
+        <button type="submit" name="get-crypto-balance">Add</button>
+    </form>
+
+    <script>
+      document.getElementById("balanceReport").onsubmit = function() {
+
+        const basedOnValue = document.getElementById("basedOnSelect").value;
+
+        url = `http://localhost:5000/api/crypto/balanceReport/${basedOnValue}`;
+
+        this.action = url;
+
+        return true;
+      };
+    </script>
+  </body>
+</html>
